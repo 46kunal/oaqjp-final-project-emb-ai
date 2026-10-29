@@ -15,7 +15,8 @@ HEADERS = {
 
 
 def emotion_detector(text_to_analyze):
-    """Detect emotions in the supplied text."""
+    """Detect emotions and return formatted scores."""
+
     payload = {
         "raw_document": {
             "text": text_to_analyze
@@ -29,6 +30,34 @@ def emotion_detector(text_to_analyze):
         timeout=30
     )
 
+    if response.status_code == 400:
+        return {
+            "anger": None,
+            "disgust": None,
+            "fear": None,
+            "joy": None,
+            "sadness": None,
+            "dominant_emotion": None
+        }
+
     response.raise_for_status()
 
-    return response.json()
+    data = response.json()
+    emotions = data["emotionPredictions"][0]["emotion"]
+
+    emotion_scores = {
+        "anger": emotions["anger"],
+        "disgust": emotions["disgust"],
+        "fear": emotions["fear"],
+        "joy": emotions["joy"],
+        "sadness": emotions["sadness"]
+    }
+
+    dominant_emotion = max(
+        emotion_scores,
+        key=emotion_scores.get
+    )
+
+    emotion_scores["dominant_emotion"] = dominant_emotion
+
+    return emotion_scores
