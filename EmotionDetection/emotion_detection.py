@@ -15,7 +15,7 @@ HEADERS = {
 
 
 def emotion_detector(text_to_analyze):
-    """Detect emotions and return formatted scores."""
+    """Detect emotions and handle invalid text."""
 
     payload = {
         "raw_document": {
@@ -53,11 +53,9 @@ def emotion_detector(text_to_analyze):
         "sadness": emotions["sadness"]
     }
 
-    dominant_emotion = max(
+    emotion_scores["dominant_emotion"] = max(
         emotion_scores,
         key=emotion_scores.get
     )
-
-    emotion_scores["dominant_emotion"] = dominant_emotion
 
     return emotion_scores
